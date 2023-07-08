@@ -1,9 +1,12 @@
+import { useContext } from 'react'
+import { UserContext } from '../../context/UserProvider'
 const ButtonGoogle = () => {
+  const { GoogleSignIn } = useContext(UserContext)
   return (
     <button
       type='button'
       className='text-black bg-white border border-gray-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2 shadow-sm hover:bg-black hover:text-white'
-
+      onClick={GoogleSignIn}
     >
       <svg
         className='w-4 h-4 mr-2 -ml-1'
