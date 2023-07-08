@@ -1,5 +1,6 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { UserContext } from '../context/UserProvider'
+import { useNavigate } from 'react-router-dom'
 
 import { Button, Label, TextInput } from 'flowbite-react'
 import GoogleBtn from '../components/Login/GoogleBtn'
@@ -7,7 +8,7 @@ import GoogleBtn from '../components/Login/GoogleBtn'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 
-const formularioScheme = Yup.object().shape({
+const loginScheme = Yup.object().shape({
   email: Yup.string()
     .email('Formato de email no valido')
     .trim('No debe contener espacion en blanco')
@@ -19,18 +20,24 @@ const formularioScheme = Yup.object().shape({
     .required('Campo obligatorio')
 })
 const Login = () => {
-  const { loginUser } = useContext(UserContext)
+  const { loginUser, user } = useContext(UserContext)
+  const navigate = useNavigate()
 
-  const handleSubmit = (values) => {
-    loginUser(values.email, values.password)
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard')
+    }
+  }, [user])
+
+  const handleSubmit = ({ email, password }) => {
+    loginUser(email, password)
   }
-
   return (
     <div>
       <h1 className='my-5 text-4xl text-center capitalize'>Iniciar sesión</h1>
       <Formik
         initialValues={{ email: '', password: '' }}
-        validationSchema={formularioScheme}
+        validationSchema={loginScheme}
         onSubmit={handleSubmit}
       >
         {({
@@ -38,34 +45,36 @@ const Login = () => {
           handleBlur,
           handleSubmit,
           values,
-          errors,
-          touched
+          errors
         }) => (
-          <Form className='flex flex-col max-w-md gap-4'>
+          <Form className='flex flex-col max-w-md gap-4 px-6 md:px-0'>
             <div>
               <div className='block mb-2'>
                 <Label
                   htmlFor='email1'
                   value='Email'
+                  color={errors.email && 'failure'}
                 />
               </div>
               <TextInput
                 id='email1'
-                placeholder='example@mail.com'
+                placeholder='ejemplo@mail.com'
                 required
                 type='email'
                 name='email'
                 onChange={handleChange('email')}
                 onBlur={handleBlur('email')}
                 value={values.email}
+                color={errors.email && 'failure'}
+                helperText={errors.email ? <span className='text-red-600'>{errors.email}</span> : null}
               />
-              {errors.email && touched.email ? console.log(errors.email) : null}
             </div>
             <div>
               <div className='block mb-2'>
                 <Label
                   htmlFor='password1'
                   value='Contraseña'
+                  color={errors.password && 'failure'}
                 />
               </div>
               <TextInput
@@ -77,8 +86,9 @@ const Login = () => {
                 onChange={handleChange('password')}
                 onBlur={handleBlur('password')}
                 value={values.password}
+                color={errors.password && 'failure'}
+                helperText={errors.password ? <span className='text-red-600'>{errors.password}</span> : null}
               />
-              {errors.email && touched.email ? console.log(errors.password) : null}
             </div>
             <Button type='submit' onClick={handleSubmit}>
               Acceder
