@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useContext } from 'react'
 import { Dropdown, Navbar, Avatar, Button } from 'flowbite-react'
 import { useNavigate } from 'react-router-dom'
+
+import { UserContext } from '../../context/UserProvider'
 const NavBar = () => {
-  const [user, setUser] = useState(false)
+  const { user, signOutUser } = useContext(UserContext)
   const navegate = useNavigate()
   return (
     <Navbar
@@ -44,7 +46,7 @@ const NavBar = () => {
               Earnings
             </Dropdown.Item>
             <Dropdown.Divider />
-            <Dropdown.Item>
+            <Dropdown.Item onClick={signOutUser}>
               Sign out
             </Dropdown.Item>
           </Dropdown>
