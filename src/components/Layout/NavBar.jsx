@@ -3,6 +3,8 @@ import { Dropdown, Navbar, Avatar, Button } from 'flowbite-react'
 import { useNavigate } from 'react-router-dom'
 
 import { UserContext } from '../../context/UserProvider'
+
+import { auth } from '../../config/firebase'
 const NavBar = () => {
   const { user, signOutUser } = useContext(UserContext)
   const navegate = useNavigate()
@@ -11,7 +13,7 @@ const NavBar = () => {
       rounded
       border
     >
-      <Navbar.Brand href='https://flowbite-react.com'>
+      <Navbar.Brand href='/'>
         <img
           alt='Flowbite React Logo'
           className='h-8 mr-3 sm:h-10'
@@ -26,28 +28,25 @@ const NavBar = () => {
         ? (
           <Dropdown
             inline
-            label={<Avatar alt='User settings' img='https://flowbite.com/docs/images/people/profile-picture-5.jpg' rounded />}
+            label={<Avatar alt='User settings' img={auth.currentUser.photoURL} rounded />}
           >
             <Dropdown.Header>
-              <span className='block text-sm'>
-                Bonnie Green
+              <span className='block text-sm capitalize'>
+                {auth.currentUser.displayName}
               </span>
               <span className='block text-sm font-medium truncate'>
-                name@flowbite.com
+                {auth.currentUser.email}
               </span>
             </Dropdown.Header>
-            <Dropdown.Item>
-              Dashboard
+            <Dropdown.Item onClick={() => navegate('/dashboard')}>
+              Notas
             </Dropdown.Item>
-            <Dropdown.Item>
-              Settings
-            </Dropdown.Item>
-            <Dropdown.Item>
-              Earnings
+            <Dropdown.Item onClick={() => navegate('/dashboard/profile')}>
+              Perfil
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={signOutUser}>
-              Sign out
+              Cerrar Sesión
             </Dropdown.Item>
           </Dropdown>
           )
