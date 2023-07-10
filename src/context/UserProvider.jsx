@@ -21,9 +21,7 @@ const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    console.log('useEffect en acción')
     const unsuscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user)
       setUser(user)
     })
     return unsuscribe
@@ -33,6 +31,7 @@ const UserProvider = ({ children }) => {
 
   const registerUser = async (email, password, nombre) => {
     try {
+      setLoading(true)
       const { user } = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -58,7 +57,10 @@ const UserProvider = ({ children }) => {
         })
       }
     } catch (error) {
-      console.log(error)
+      const { message } = erroresFirebase(error.code)
+      toast.error(message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -78,13 +80,13 @@ const UserProvider = ({ children }) => {
     try {
       signOut(auth)
     } catch (error) {
-      console.log(error)
+      const { message } = erroresFirebase(error.code)
+      toast.error(message)
     }
   }
 
   const GoogleSignIn = async () => {
     try {
-      setLoading(true)
       const provider = new GoogleAuthProvider()
       const { user } = await signInWithRedirect(auth, provider)
       const docRef = doc(db, 'users', user.uid)
@@ -107,9 +109,8 @@ const UserProvider = ({ children }) => {
         })
       }
     } catch (error) {
-      console.log(error)
-    } finally {
-      setLoading(true)
+      const { message } = erroresFirebase(error.code)
+      toast.error(message)
     }
   }
 
