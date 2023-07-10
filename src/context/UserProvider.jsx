@@ -11,34 +11,28 @@ import {
 import { auth, db } from '../config/firebase'
 import { getDoc, setDoc, doc } from 'firebase/firestore/lite'
 
+import { erroresFirebase } from '../utils/erroresFirebase'
+import { toast } from 'sonner'
+import LoadingBtn from '../components/Layout/LoadingBtn'
+
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(false)
   const [userData, setUserData] = useState({})
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState()
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setLoading(true)
-      if (user) {
-        setUser(true)
-        setLoading(false)
-        setUserData({
-          email: user.email,
-          uid: user.uid,
-          displayName: user.displayName,
-          photoURL: user.photoURL
-        })
-      } else {
-        setUser(false)
-        setUserData({})
-      }
+    console.log('useEffect en acción')
+    const unsuscribe = onAuthStateChanged(auth, (user) => {
+      console.log(user)
+      setUser(user)
     })
-  }, [user])
+    return unsuscribe
+  }, [])
+
+  if (user === false) return <LoadingBtn />
 
   const registerUser = async (email, password, nombre) => {
     try {
-      setLoading(true)
       const { user } = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -65,25 +59,27 @@ const UserProvider = ({ children }) => {
       }
     } catch (error) {
       console.log(error)
-    } finally {
-      setLoading(false)
     }
   }
 
-  const loginUser = (email, password) => {
+  const loginUser = async (email, password) => {
     try {
       setLoading(true)
-      signInWithEmailAndPassword(auth, email, password)
+      await signInWithEmailAndPassword(auth, email, password)
     } catch (error) {
-      console.log(error.message)
-      setError(error.message)
+      const { message } = erroresFirebase(error.code)
+      toast.error(message)
     } finally {
       setLoading(false)
     }
   }
 
   const signOutUser = () => {
-    signOut(auth)
+    try {
+      signOut(auth)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const GoogleSignIn = async () => {
@@ -113,7 +109,7 @@ const UserProvider = ({ children }) => {
     } catch (error) {
       console.log(error)
     } finally {
-      setLoading(false)
+      setLoading(true)
     }
   }
 
@@ -133,8 +129,7 @@ const UserProvider = ({ children }) => {
         userData,
         setUserData,
         ResetPassword,
-        loading,
-        error
+        loading
       }}
     >
       {children}
