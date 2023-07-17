@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { db, auth } from '../firebase'
+import { db, auth } from '../config/firebase'
 import { addDoc, collection, deleteDoc, getDocs, query, where, doc, updateDoc } from 'firebase/firestore/lite'
 
 export const useFirestore = () => {
