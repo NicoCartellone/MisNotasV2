@@ -11,10 +11,10 @@ import GoogleBtn from '../components/Login/GoogleBtn'
 const loginScheme = Yup.object().shape({
   email: Yup.string()
     .email('Formato de email no valido')
-    .trim('No debe contener espacion en blanco')
+    .trim('No se permiten caracteres vacios al inicio y al final')
     .required('Campo obligatorio'),
   password: Yup.string()
-    .trim('No debe contener espacion en blanco')
+    .trim('No se permiten caracteres vacios al inicio y al final')
     .min(4, 'Minimo 8 caracteres')
     .max(12, 'Maximo 12 caracteres')
     .required('Campo obligatorio')
