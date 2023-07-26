@@ -1,7 +1,6 @@
-
 const CardEditNoteBtn = () => {
   return (
-    <button title="editar">
+    <button title='editar'>
       <svg
         xmlns='http://www.w3.org/2000/svg'
         fill='none'
